@@ -74,16 +74,32 @@ export class UsersRepository {
     return user;
   }
 
+  async get_one_by_cpf(cpf: string) {
+    const user = await this.prismaService.user.findUniqueOrThrow({
+      where: {
+        cpf,
+      },
+    });
+
+    return user;
+  }
+
   async get_all() {
     const users = await this.prismaService.user.findMany();
 
     return users;
   }
 
-  async get_some_by_name(nickname: string) {
+  async get_some_by_nickname(nickname: string) {
     const users = await this.prismaService.user.findMany({
       where: {
-        nickname,
+        OR: [
+          {
+            nickname: {
+              startsWith: `%${nickname}%`,
+            },
+          },
+        ],
       },
     });
 
