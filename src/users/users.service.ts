@@ -16,13 +16,15 @@ import { Prisma } from '@prisma/client';
 export class UsersService {
   constructor(@Inject() private usersRepostory: UsersRepository) {}
 
-  async create({ email, username, password }: CreateUserDto) {
+  async create({ cpf, email, fullname, nickname, password }: CreateUserDto) {
     try {
       const new_user = await this.usersRepostory.create({
         email,
         password: await bcrypt.hash(password, bcrypt.genSaltSync()),
         role: 'USER',
-        username,
+        nickname,
+        fullname,
+        cpf,
       });
 
       return {
@@ -69,14 +71,19 @@ export class UsersService {
     }
   }
 
-  async update(id: string, { email, password, username }: UpdateUserDto) {
+  async update(
+    id: string,
+    { cpf, email, fullname, nickname, password }: UpdateUserDto,
+  ) {
     try {
       const updatedUser = await this.usersRepostory.update({
         user_id: id,
         data: {
           email,
           password,
-          username,
+          fullname,
+          nickname,
+          cpf,
         },
       });
       return {

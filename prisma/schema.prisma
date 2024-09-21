@@ -17,7 +17,7 @@ model User {
   id              String    @id @default(uuid())
   nickname        String    @unique
   fullname        String
-  profile_pic_url String
+  profile_pic_url String?
   cpf             String    @unique
   email           String    @unique
   password        String
@@ -36,7 +36,7 @@ model Product {
   id              String   @id @default(uuid())
   name            String
   description     String
-  image_url       String
+  image_url       String?
   quantity        Int
   price           Float
   product_pic_url String?
