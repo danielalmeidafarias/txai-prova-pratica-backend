@@ -14,14 +14,17 @@ datasource db {
 }
 
 model User {
-  id        String    @id @default(uuid())
-  username  String
-  email     String    @unique
-  password  String
-  role      Role
-  products  Product[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id              String    @id @default(uuid())
+  nickname        String    @unique
+  fullname        String
+  profile_pic_url String
+  cpf             String    @unique
+  email           String    @unique
+  password        String
+  role            Role
+  products        Product[]
+  created_at      DateTime  @default(now())
+  updated_at      DateTime  @updatedAt
 }
 
 enum Role {
@@ -30,13 +33,15 @@ enum Role {
 }
 
 model Product {
-  id          String   @id @default(uuid())
-  name        String
-  description String
-  price       Float
-  imageUrl    String?
-  owner       User     @relation(fields: [ownerId], references: [id])
-  ownerId     String   
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id              String   @id @default(uuid())
+  name            String
+  description     String
+  image_url       String
+  quantity        Int
+  price           Float
+  product_pic_url String?
+  owner           User     @relation(fields: [owner_id], references: [id])
+  owner_id        String
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
 }
