@@ -12,6 +12,7 @@ import { Prisma } from '@prisma/client';
 interface ICreateProduct {
   name: string;
   description: string;
+  quantity?: number;
   price: number;
   owner_id: string;
   image_url?: string;
@@ -27,12 +28,14 @@ export class ProductsRepository {
     owner_id,
     price,
     image_url,
+    quantity,
   }: ICreateProduct) {
     try {
       const product = await this.prismaService.product.create({
         data: {
           name,
           description,
+          quantity,
           price,
           owner_id,
           image_url,
@@ -156,10 +159,10 @@ export class ProductsRepository {
     }
   }
 
-  async get_some_by_owner_id(ownerId: string) {
+  async get_some_by_owner_id(owner_id: string) {
     try {
       const products = await this.prismaService.product.findMany({
-        where: { ownerId },
+        where: { owner_id },
       });
 
       return products;
@@ -171,7 +174,7 @@ export class ProductsRepository {
     }
   }
 
-  async getByDescription(description: string) {
+  async get_by_description(description: string) {
     try {
       const products = await this.prismaService.product.findMany({
         where: {
@@ -190,7 +193,7 @@ export class ProductsRepository {
     }
   }
 
-  async getByPriceRange(minPrice: number, maxPrice: number) {
+  async get_by_price_range(minPrice: number, maxPrice: number) {
     try {
       const products = await this.prismaService.product.findMany({
         where: {
