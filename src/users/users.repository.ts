@@ -4,7 +4,9 @@ import { PrismaService } from 'src/prisma.service';
 import { User } from '@prisma/client';
 
 interface ICreateUser {
-  username: string;
+  nickname: string;
+  fullname: string;
+  cpf: string;
   email: string;
   password: string;
   role: Role;
@@ -20,17 +22,21 @@ export class UsersRepository {
   constructor(@Inject() private prismaService: PrismaService) {}
 
   async create({
+    nickname,
     email,
+    fullname,
+    cpf,
     password,
     role,
-    username,
   }: ICreateUser): Promise<User> {
     const new_user = await this.prismaService.user.create({
       data: {
         email,
+        nickname,
+        fullname,
         password,
+        cpf,
         role,
-        username,
       },
     });
 
@@ -74,10 +80,10 @@ export class UsersRepository {
     return users;
   }
 
-  async get_some_by_name(username: string) {
+  async get_some_by_name(nickname: string) {
     const users = await this.prismaService.user.findMany({
       where: {
-        username,
+        nickname,
       },
     });
 
