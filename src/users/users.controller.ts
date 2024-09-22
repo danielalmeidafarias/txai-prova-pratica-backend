@@ -7,12 +7,14 @@ import {
   Param,
   Delete,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { Request } from 'express';
 
 @ApiTags('users')
 @Controller('users')
@@ -26,7 +28,8 @@ export class UsersController {
 
   @UseGuards(AuthGuard)
   @Get()
-  findAll() {
+  findAll(@Req() req: Request) {
+    console.log(req['user']);
     return this.usersService.findAll();
   }
 

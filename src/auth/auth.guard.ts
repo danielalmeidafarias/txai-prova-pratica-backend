@@ -3,16 +3,22 @@ dotenv.config();
 import {
   CanActivate,
   ExecutionContext,
+  Inject,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { AuthService } from './auth.service';
 import { TokenExpiredError } from '@nestjs/jwt';
+import { UsersRepository } from 'src/users/users.repository';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  constructor(private authService: AuthService) {}
+  constructor(
+    @Inject() private authService: AuthService,
+    @Inject() private usersRepostory: UsersRepository,
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request: Request = context.switchToHttp().getRequest();
@@ -25,11 +31,12 @@ export class AuthGuard implements CanActivate {
 
     try {
       const user_id = await this.authService.verify_token(access_token);
+      const user = await this.usersRepostory.get_one_by_id(user_id);
       response.cookie(
         'access_token',
         await this.authService.get_access_token(user_id),
       );
-      request['user_id'] = user_id;
+      request['user'] = user;
 
       return true;
     } catch (err) {
@@ -50,6 +57,11 @@ export class AuthGuard implements CanActivate {
 
           return true;
         } catch {
+          throw new UnauthorizedException();
+        }
+      }
+      if (err instanceof Prisma.PrismaClientKnownRequestError) {
+        if (err.code === 'P2025') {
           throw new UnauthorizedException();
         }
       }
