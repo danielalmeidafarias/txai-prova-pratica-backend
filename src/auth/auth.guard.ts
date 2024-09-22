@@ -11,7 +11,6 @@ import { Request, Response } from 'express';
 import { AuthService } from './auth.service';
 import { TokenExpiredError } from '@nestjs/jwt';
 import { UsersRepository } from 'src/users/users.repository';
-import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -40,11 +39,15 @@ export class AuthGuard implements CanActivate {
 
       return true;
     } catch (err) {
+      const refresh_token = request.cookies['refresh_token'];
+      if (!refresh_token) {
+        throw new UnauthorizedException();
+      }
       if (err instanceof TokenExpiredError) {
         try {
-          const refresh_token = request.cookies['refresh_token'];
-
           const user_id = await this.authService.verify_token(refresh_token);
+          const user = await this.usersRepostory.get_one_by_id(user_id);
+
           response.cookie(
             'access_token',
             await this.authService.get_access_token(user_id),
@@ -53,15 +56,10 @@ export class AuthGuard implements CanActivate {
             'refresh_token',
             await this.authService.get_refresh_token(user_id),
           );
-          request['user_id'] = user_id;
+          request['user'] = user;
 
           return true;
         } catch {
-          throw new UnauthorizedException();
-        }
-      }
-      if (err instanceof Prisma.PrismaClientKnownRequestError) {
-        if (err.code === 'P2025') {
           throw new UnauthorizedException();
         }
       }
