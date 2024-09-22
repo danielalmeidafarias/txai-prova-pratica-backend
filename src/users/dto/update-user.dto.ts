@@ -6,7 +6,9 @@ import {
   IsNumberString,
   IsEmail,
   IsStrongPassword,
+  IsEnum,
 } from 'class-validator';
+import { Role } from '@prisma/client';
 
 export class UpdateUserDto extends PartialType(CreateUserDto) {
   @ApiPropertyOptional()
@@ -28,4 +30,8 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
   @ApiPropertyOptional()
   @IsStrongPassword()
   password: string;
+
+  @ApiPropertyOptional()
+  @IsEnum(Role)
+  role: Role;
 }

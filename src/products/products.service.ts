@@ -78,8 +78,21 @@ export class ProductsService {
     { description, name, price, quantity }: UpdateProductDto,
     req: Request,
   ) {
-    const user: User = req['user'];
+    const user = req['user'];
     const product = await this.findOne(id);
+
+    if (user.id != product.owner_id) {
+      switch (user.role) {
+        case Role.USER:
+          throw new UnauthorizedException();
+        case Role.ADMIN:
+          break;
+        case Role.MASTER:
+          break;
+        default:
+          throw new UnauthorizedException();
+      }
+    }
 
     if (
       !(product.owner_id == user.id) &&
@@ -108,14 +121,20 @@ export class ProductsService {
   }
 
   async remove(id: string, req: Request) {
-    const user: User = req['user'];
+    const user = req['user'];
     const product = await this.findOne(id);
 
-    if (
-      !(product.owner_id == user.id) &&
-      !(user.role == Role.ADMIN || user.role == Role.MASTER)
-    ) {
-      throw new UnauthorizedException();
+    if (user.id != product.owner_id) {
+      switch (user.role) {
+        case Role.USER:
+          throw new UnauthorizedException();
+        case Role.ADMIN:
+          break;
+        case Role.MASTER:
+          break;
+        default:
+          throw new UnauthorizedException();
+      }
     }
     try {
       await this.productsRepository.delete(id);

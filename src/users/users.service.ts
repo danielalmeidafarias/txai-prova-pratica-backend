@@ -75,16 +75,30 @@ export class UsersService {
 
   async update(
     id: string,
-    { cpf, email, fullname, nickname, password }: UpdateUserDto,
+    { cpf, email, fullname, nickname, password, role }: UpdateUserDto,
     req: Request,
   ) {
     const user = req['user'];
 
-    if (
-      !(user.id == id) &&
-      !(user.role == Role.ADMIN || user.role == Role.MASTER)
-    ) {
-      throw new UnauthorizedException();
+    if (role && user.role != Role.MASTER) {
+      throw new UnauthorizedException("You don't have MASTER permission");
+    }
+
+    if (user.id != id) {
+      switch (user.role) {
+        case Role.USER:
+          throw new UnauthorizedException();
+        case Role.ADMIN:
+          const db_user = await this.findOne(id);
+          if (db_user.role == Role.ADMIN || db_user.role == Role.MASTER) {
+            throw new UnauthorizedException();
+          }
+          break;
+        case Role.MASTER:
+          break;
+        default:
+          throw new UnauthorizedException();
+      }
     }
 
     try {
@@ -96,6 +110,7 @@ export class UsersService {
           fullname,
           nickname,
           cpf,
+          role,
         },
       });
       return {
@@ -122,11 +137,21 @@ export class UsersService {
   async remove(id: string, req: Request) {
     const user = req['user'];
 
-    if (
-      !(user.id == id) &&
-      !(user.role == Role.ADMIN || user.role == 'MASTER')
-    ) {
-      throw new UnauthorizedException();
+    if (user.id != id) {
+      switch (user.role) {
+        case Role.USER:
+          throw new UnauthorizedException();
+        case Role.ADMIN:
+          const db_user = await this.findOne(id);
+          if (db_user.role == Role.ADMIN || db_user.role == Role.MASTER) {
+            throw new UnauthorizedException();
+          }
+          break;
+        case Role.MASTER:
+          break;
+        default:
+          throw new UnauthorizedException();
+      }
     }
 
     try {
