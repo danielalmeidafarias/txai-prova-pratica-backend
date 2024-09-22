@@ -10,12 +10,12 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('/login')
-  sign_in(@Body() signinDto: LoginDto, @Res() res: Response) {
-    return this.authService.login(signinDto, res);
+  async sign_in(@Body() signinDto: LoginDto, @Res() res: Response) {
+    return await this.authService.login(signinDto, res);
   }
 
   @Post('/logout')
-  logout(@Res() res: Response) {
-    return this.authService.logout(res);
+  async logout(@Res() res: Response) {
+    return await this.authService.logout(res);
   }
 }
