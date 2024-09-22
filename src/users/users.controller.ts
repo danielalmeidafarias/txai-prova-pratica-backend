@@ -29,7 +29,7 @@ export class UsersController {
 
   @UseGuards(AuthGuard)
   @Get()
-  findAll(@Req() req: Request) {
+  findAll() {
     return this.usersService.findAll();
   }
 
@@ -41,13 +41,17 @@ export class UsersController {
 
   @UseGuards(AuthGuard)
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(id, updateUserDto);
+  update(
+    @Param('id') id: string,
+    @Body() updateUserDto: UpdateUserDto,
+    @Req() req: Request,
+  ) {
+    return this.usersService.update(id, updateUserDto, req);
   }
 
   @UseGuards(AuthGuard)
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(id);
+  remove(@Param('id') id: string, @Req() req: Request) {
+    return this.usersService.remove(id, req);
   }
 }

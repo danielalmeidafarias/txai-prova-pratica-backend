@@ -5,12 +5,14 @@ import {
   BadRequestException,
   InternalServerErrorException,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersRepository } from './users.repository';
 import * as bcrypt from 'bcrypt';
-import { Prisma } from '@prisma/client';
+import { Prisma, Role } from '@prisma/client';
+import { Request } from 'express';
 
 @Injectable()
 export class UsersService {
@@ -74,7 +76,17 @@ export class UsersService {
   async update(
     id: string,
     { cpf, email, fullname, nickname, password }: UpdateUserDto,
+    req: Request,
   ) {
+    const user = req['user'];
+
+    if (
+      !(user.id == id) &&
+      !(user.role == Role.ADMIN || user.role == Role.MASTER)
+    ) {
+      throw new UnauthorizedException();
+    }
+
     try {
       const updatedUser = await this.usersRepostory.update({
         user_id: id,
@@ -107,7 +119,16 @@ export class UsersService {
     }
   }
 
-  async remove(id: string) {
+  async remove(id: string, req: Request) {
+    const user = req['user'];
+
+    if (
+      !(user.id == id) &&
+      !(user.role == Role.ADMIN || user.role == 'MASTER')
+    ) {
+      throw new UnauthorizedException();
+    }
+
     try {
       await this.usersRepostory.delete(id);
       return { message: `User with ID ${id} deleted successfully` };

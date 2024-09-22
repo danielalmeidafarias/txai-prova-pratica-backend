@@ -28,6 +28,7 @@ model User {
 }
 
 enum Role {
+  MASTER
   ADMIN
   USER
 }
@@ -39,7 +40,7 @@ model Product {
   image_url       String?
   quantity        Int
   price           Float
-  owner           User     @relation(fields: [owner_id], references: [id])
+  owner           User     @relation(fields: [owner_id], references: [id], onDelete: Cascade)
   owner_id        String
   created_at      DateTime @default(now())
   updated_at      DateTime @updatedAt

@@ -4,13 +4,14 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductsRepository } from './products.repository';
 import { Request } from 'express';
 import { SearchProductDto } from './dto/search-product.dto';
-import { Prisma } from '@prisma/client';
+import { Prisma, Role, User } from '@prisma/client';
 
 @Injectable()
 export class ProductsService {
@@ -75,7 +76,17 @@ export class ProductsService {
   async update(
     id: string,
     { description, name, price, quantity }: UpdateProductDto,
+    req: Request,
   ) {
+    const user: User = req['user'];
+    const product = await this.findOne(id);
+
+    if (
+      !(product.owner_id == user.id) &&
+      !(user.role == Role.ADMIN || user.role == Role.MASTER)
+    ) {
+      throw new UnauthorizedException();
+    }
     try {
       const updatedUser = await this.productsRepository.update({
         product_id: id,
@@ -91,27 +102,27 @@ export class ProductsService {
         user: updatedUser,
       };
     } catch (err) {
-      if (err instanceof Prisma.PrismaClientKnownRequestError) {
-        if (err.code === 'P2025') {
-          throw new NotFoundException(err.message);
-        }
-      }
       console.error(err);
       throw new InternalServerErrorException();
     }
   }
 
-  async remove(id: string) {
+  async remove(id: string, req: Request) {
+    const user: User = req['user'];
+    const product = await this.findOne(id);
+
+    if (
+      !(product.owner_id == user.id) &&
+      !(user.role == Role.ADMIN || user.role == Role.MASTER)
+    ) {
+      throw new UnauthorizedException();
+    }
     try {
       await this.productsRepository.delete(id);
       return { message: `Product with ID ${id} deleted successfully` };
     } catch (err) {
       if (err instanceof Prisma.PrismaClientKnownRequestError) {
-        if (err.code === 'P2001') {
-          throw new BadRequestException({
-            message: `There is no registered product with ${id} id`,
-          });
-        } else if (err.code === 'P2014') {
+        if (err.code === 'P2014') {
           throw new BadRequestException(err.message);
         }
       }
