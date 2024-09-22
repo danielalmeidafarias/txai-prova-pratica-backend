@@ -29,7 +29,6 @@ export class UsersController {
   @UseGuards(AuthGuard)
   @Get()
   findAll(@Req() req: Request) {
-    console.log(req['user']);
     return this.usersService.findAll();
   }
 

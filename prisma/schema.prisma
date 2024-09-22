@@ -39,7 +39,6 @@ model Product {
   image_url       String?
   quantity        Int
   price           Float
-  product_pic_url String?
   owner           User     @relation(fields: [owner_id], references: [id])
   owner_id        String
   created_at      DateTime @default(now())

@@ -8,6 +8,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { Prisma } from '@prisma/client';
+import { SearchProductDto } from './dto/search-product.dto';
 
 interface ICreateProduct {
   name: string;
@@ -16,6 +17,11 @@ interface ICreateProduct {
   price: number;
   owner_id: string;
   image_url?: string;
+}
+
+interface IUpdateProduct {
+  data: Partial<ICreateProduct>;
+  product_id: string;
 }
 
 @Injectable()
@@ -72,11 +78,11 @@ export class ProductsRepository {
     }
   }
 
-  async update(product_id: string, updateData: Partial<ICreateProduct>) {
+  async update({ data, product_id }: IUpdateProduct) {
     try {
       const updatedProduct = await this.prismaService.product.update({
         where: { id: product_id },
-        data: updateData,
+        data,
       });
 
       return {
@@ -159,57 +165,46 @@ export class ProductsRepository {
     }
   }
 
-  async get_some_by_owner_id(owner_id: string) {
-    try {
-      const products = await this.prismaService.product.findMany({
-        where: { owner_id },
-      });
+  get_products_search_query({
+    description,
+    max_price,
+    min_price,
+    name,
+    owner_id,
+  }: SearchProductDto) {
+    const filters: Prisma.ProductWhereInput = {};
 
-      return products;
-    } catch (err) {
-      console.error(err);
-      throw new InternalServerErrorException(
-        'An unexpected error occurred. Please try again later.',
-      );
+    if (owner_id) {
+      filters.owner_id = owner_id;
     }
+
+    if (name) {
+      filters.name = {
+        contains: name,
+      };
+    }
+
+    if (min_price || max_price) {
+      filters.price = {
+        ...(min_price && { gte: min_price }),
+        ...(max_price && { lte: max_price }),
+      };
+    }
+
+    if (description) {
+      filters.description = {
+        contains: description,
+      };
+    }
+
+    return filters;
   }
 
-  async get_by_description(description: string) {
-    try {
-      const products = await this.prismaService.product.findMany({
-        where: {
-          description: {
-            contains: description,
-          },
-        },
-      });
+  async search_product(search_filters: SearchProductDto) {
+    const products = await this.prismaService.product.findMany({
+      where: this.get_products_search_query(search_filters),
+    });
 
-      return products;
-    } catch (err) {
-      console.error(err);
-      throw new InternalServerErrorException(
-        'An unexpected error occurred. Please try again later.',
-      );
-    }
-  }
-
-  async get_by_price_range(minPrice: number, maxPrice: number) {
-    try {
-      const products = await this.prismaService.product.findMany({
-        where: {
-          price: {
-            gte: minPrice,
-            lte: maxPrice,
-          },
-        },
-      });
-
-      return products;
-    } catch (err) {
-      console.error(err);
-      throw new InternalServerErrorException(
-        'An unexpected error occurred. Please try again later.',
-      );
-    }
+    return products;
   }
 }

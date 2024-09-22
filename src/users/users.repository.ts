@@ -59,6 +59,16 @@ export class UsersRepository {
       where: {
         id: user_id,
       },
+      select: {
+        id: true,
+        email: true,
+        nickname: true,
+        products: true,
+        cpf: true,
+        fullname: true,
+        password: true,
+        role: true,
+      },
     });
 
     return user;
