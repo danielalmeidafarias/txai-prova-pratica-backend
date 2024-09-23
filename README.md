@@ -1,4 +1,6 @@
 # TXAI Prova Prática Backend
+* A api está disponível em https://txai-prova-pratica-backend-1.onrender.com/api
+* O deploy foi realizado no plano gratuito, por isso, algumas requsições podem demorar maisn que o normal...
 
 ## Descrição
 - Esta é uma API de gerenciamento de produtos desenvolvida como parte de um desafio técnico. A aplicação permite a criação, leitura, atualização e exclusão de produtos, utilizando o framework Nest.js e o banco de dados MySQL.
@@ -32,7 +34,7 @@ npm install
 - Configuração do Banco de Dados: Crie um arquivo .env na raiz do projeto e adicione as seguintes variáveis de ambiente:
 
 ```env
-DATABASE_URL="mysql://USER:PASSWORD@HOST:PORT/DB"
+DATABASE_URL="mysql://root:root@localhost:3306/txai"
 JWT_SECRET="DO NOT USE THIS VALUE. INSTEAD, CREATE A COMPLEX SECRET AND KEEP IT SAFE OUTSIDE OF THE SOURCE CODE."
 COOKIES_SECRET="another super secret string"
 ```
@@ -54,6 +56,7 @@ npm run migrate
 npm run start:dev
 ```
 
+7. Abra localhost:3000/api para Documentação
 
 ## Scripts Disponíveis
 - npm run build: Compila a aplicação.
