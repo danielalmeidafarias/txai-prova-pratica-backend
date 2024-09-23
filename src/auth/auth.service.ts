@@ -44,11 +44,13 @@ export class AuthService {
         expires: new Date(now_date.setHours(now_date.getHours() + 1)),
         httpOnly: true,
         sameSite: 'lax',
+        secure: true,
       });
       res.cookie('refresh_token', await this.get_refresh_token(user.id), {
         expires: new Date(now_date.setDate(now_date.getDate() + 1)),
         httpOnly: true,
         sameSite: 'lax',
+        secure: true,
       });
       const filteredUser = (() => {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -64,8 +66,16 @@ export class AuthService {
   }
 
   async logout(res: Response) {
-    res.cookie('access_token', null);
-    res.cookie('refresh_token', null);
+    res.cookie('access_token', null, {
+        httpOnly: true,
+        sameSite: 'lax',
+        secure: true,
+      });
+    res.cookie('refresh_token', null, {
+        httpOnly: true,
+        sameSite: 'lax',
+        secure: true,
+      });
 
     return res.status(200).json({ message: 'Successful logout!' });
   }
