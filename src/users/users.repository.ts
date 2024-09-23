@@ -100,20 +100,14 @@ export class UsersRepository {
     return users;
   }
 
-  async get_some_by_nickname(nickname: string) {
-    const users = await this.prismaService.user.findMany({
+  async get_one_by_nickname(nickname: string) {
+    const user = await this.prismaService.user.findUniqueOrThrow({
       where: {
-        OR: [
-          {
-            nickname: {
-              startsWith: `%${nickname}%`,
-            },
-          },
-        ],
+        nickname,
       },
     });
 
-    return users;
+    return user;
   }
 
   async delete(user_id: string) {

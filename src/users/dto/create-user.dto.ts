@@ -4,6 +4,7 @@ import {
   IsEmail,
   IsStrongPassword,
   IsNumberString,
+  Length,
 } from 'class-validator';
 
 export class CreateUserDto {
@@ -17,6 +18,7 @@ export class CreateUserDto {
 
   @ApiProperty()
   @IsNumberString()
+  @Length(11)
   cpf: string;
 
   @ApiProperty()

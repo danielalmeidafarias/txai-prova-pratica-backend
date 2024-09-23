@@ -11,7 +11,7 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductsRepository } from './products.repository';
 import { Request } from 'express';
 import { SearchProductDto } from './dto/search-product.dto';
-import { Prisma, Role, User } from '@prisma/client';
+import { Prisma, Role } from '@prisma/client';
 
 @Injectable()
 export class ProductsService {

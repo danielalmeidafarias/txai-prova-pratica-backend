@@ -37,7 +37,7 @@ export class UsersService {
       if (err instanceof Prisma.PrismaClientKnownRequestError) {
         if (err.code == 'P2002') {
           throw new ConflictException({
-            message: `There is already a registered user with this email`,
+            message: `There is already a registered user with this ${String(err.meta.target).split('_').slice(-2, -1)[0]}`,
           });
         }
       }

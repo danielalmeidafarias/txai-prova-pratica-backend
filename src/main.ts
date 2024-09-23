@@ -12,6 +12,12 @@ async function bootstrap() {
 
   app.use(cookieParser(process.env.COOKIES_SECRET));
 
+  app.enableCors({
+    origin: process.env.FRONT_END_URL,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+    credentials: true,
+  });
+
   const config = new DocumentBuilder()
     .setTitle('Txai Prova Prática')
     .setDescription('Prova prática para vaga de desenvolvedor(a)')

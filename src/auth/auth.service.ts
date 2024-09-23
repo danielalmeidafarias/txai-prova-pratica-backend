@@ -20,36 +20,46 @@ export class AuthService {
     @Inject() private jwtService: JwtService,
   ) {}
 
-  async login({ cpf, password }: LoginDto, res: Response) {
+  async login({ nickname, password }: LoginDto, res: Response) {
+    let user;
     try {
-      const user = await this.usersRepository.get_one_by_cpf(cpf);
-
-      const isPasswordCorrect = bcript.compareSync(password, user.password);
-
-      if (isPasswordCorrect) {
-        const now_date = new Date();
-        res.cookie('access_token', await this.get_access_token(user.id), {
-          expires: new Date(now_date.setHours(now_date.getHours() + 1)),
-          httpOnly: true,
-        });
-        res.cookie('refresh_token', await this.get_refresh_token(user.id), {
-          expires: new Date(now_date.setDate(now_date.getDate() + 1)),
-          httpOnly: true,
-        });
-        return res.status(200).json({ message: 'Successful Login!' });
-      } else {
-        throw new UnauthorizedException('Wrong password');
-      }
+      user = await this.usersRepository.get_one_by_nickname(nickname);
     } catch (err) {
       if (err instanceof Prisma.PrismaClientKnownRequestError) {
         if (err.code === 'P2025') {
           throw new NotFoundException({
-            message: `There is no registered user with ${cpf} cpf`,
+            message: `There is no registered user with ${nickname} nickname`,
           });
         }
       }
       console.error(err);
       throw new InternalServerErrorException();
+    }
+
+    const isPasswordCorrect = bcript.compareSync(password, user.password);
+
+    if (isPasswordCorrect) {
+      const now_date = new Date();
+      res.cookie('access_token', await this.get_access_token(user.id), {
+        expires: new Date(now_date.setHours(now_date.getHours() + 1)),
+        httpOnly: true,
+        sameSite: 'lax',
+      });
+      res.cookie('refresh_token', await this.get_refresh_token(user.id), {
+        expires: new Date(now_date.setDate(now_date.getDate() + 1)),
+        httpOnly: true,
+        sameSite: 'lax',
+      });
+      const filteredUser = (() => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { password, ...userWithoutPassword } = user;
+        return userWithoutPassword;
+      })();
+      return res
+        .status(200)
+        .json({ message: 'Successful Login!', user: filteredUser });
+    } else {
+      throw new UnauthorizedException('Wrong password');
     }
   }
 

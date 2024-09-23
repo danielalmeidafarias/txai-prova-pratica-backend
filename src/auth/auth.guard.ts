@@ -31,9 +31,16 @@ export class AuthGuard implements CanActivate {
     try {
       const user_id = await this.authService.verify_token(access_token);
       const user = await this.usersRepostory.get_one_by_id(user_id);
+      const now_date = new Date();
+
       response.cookie(
         'access_token',
         await this.authService.get_access_token(user_id),
+        {
+          expires: new Date(now_date.setHours(now_date.getHours() + 1)),
+          httpOnly: true,
+          sameSite: 'lax',
+        },
       );
       request['user'] = user;
 
@@ -47,14 +54,24 @@ export class AuthGuard implements CanActivate {
         try {
           const user_id = await this.authService.verify_token(refresh_token);
           const user = await this.usersRepostory.get_one_by_id(user_id);
-
+          const now_date = new Date();
           response.cookie(
             'access_token',
             await this.authService.get_access_token(user_id),
+            {
+              expires: new Date(now_date.setHours(now_date.getHours() + 1)),
+              httpOnly: true,
+              sameSite: 'lax',
+            },
           );
           response.cookie(
             'refresh_token',
             await this.authService.get_refresh_token(user_id),
+            {
+              expires: new Date(now_date.setHours(now_date.getHours() + 1)),
+              httpOnly: true,
+              sameSite: 'lax',
+            },
           );
           request['user'] = user;
 
