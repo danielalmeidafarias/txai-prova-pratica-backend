@@ -56,11 +56,7 @@ npm run start:dev
 
 
 ## Scripts Disponíveis
-npm run build: Compila a aplicação.
-npm run format: Formata o código com Prettier.
-npm run start: Inicia a aplicação.
-npm run start:dev: Inicia a aplicação em modo de desenvolvimento.
-npm run test: Executa os testes.
-npm run lint: Executa o linter no código.
-npm run migrate: Executa as migrações do Prisma.
-npm run generate: Gera o cliente do Prisma.
+- npm run build: Compila a aplicação.
+- npm run start: Inicia a aplicação.
+- npm run start:dev: Inicia a aplicação em modo de desenvolvimento.
+- npm run test: Executa os testes.
