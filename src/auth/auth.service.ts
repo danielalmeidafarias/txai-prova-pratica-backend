@@ -43,13 +43,13 @@ export class AuthService {
       res.cookie('access_token', await this.get_access_token(user.id), {
         expires: new Date(now_date.setHours(now_date.getHours() + 1)),
         httpOnly: true,
-        sameSite: 'lax',
+        sameSite: 'none',
         secure: true,
       });
       res.cookie('refresh_token', await this.get_refresh_token(user.id), {
         expires: new Date(now_date.setDate(now_date.getDate() + 1)),
         httpOnly: true,
-        sameSite: 'lax',
+        sameSite: 'none',
         secure: true,
       });
       const filteredUser = (() => {
@@ -67,15 +67,15 @@ export class AuthService {
 
   async logout(res: Response) {
     res.cookie('access_token', null, {
-        httpOnly: true,
-        sameSite: 'lax',
-        secure: true,
-      });
+      httpOnly: true,
+      sameSite: 'none',
+      secure: true,
+    });
     res.cookie('refresh_token', null, {
-        httpOnly: true,
-        sameSite: 'lax',
-        secure: true,
-      });
+      httpOnly: true,
+      sameSite: 'none',
+      secure: true,
+    });
 
     return res.status(200).json({ message: 'Successful logout!' });
   }
