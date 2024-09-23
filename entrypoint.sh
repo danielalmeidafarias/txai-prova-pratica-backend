@@ -5,7 +5,7 @@ set -e
 sleep 5
 
 # Wait for the database to be ready
-wait-for-it db:3306 -t 60 || exit 1
+wait-for-it localhost:3306 -t 60 || exit 1
 
 # Run Prisma migrations
 npx prisma migrate deploy
