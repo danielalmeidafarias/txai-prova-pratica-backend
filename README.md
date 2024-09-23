@@ -49,7 +49,11 @@ docker-compose up -d
 ```bash
 npm run migrate
 ```
-## (Opcional) Rode o seeder do banco de dados:
+## Rode o seeder do banco de dados:
+1. É criado um usuário com login=admin-master e senha=123456789@
+   - Esse usuário obtém recursos de MASTER
+   - Apenas o usuário MASTER pode promover um usuário a ADMIN
+2. É adicionado no banco alguns usuário e produtos para teste
 ```bash
 npx prisma db seed
 ```
