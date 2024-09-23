@@ -40,6 +40,7 @@ export class AuthGuard implements CanActivate {
           expires: new Date(now_date.setHours(now_date.getHours() + 1)),
           httpOnly: true,
           sameSite: 'lax',
+          secure: true,
         },
       );
       request['user'] = user;
@@ -62,6 +63,7 @@ export class AuthGuard implements CanActivate {
               expires: new Date(now_date.setHours(now_date.getHours() + 1)),
               httpOnly: true,
               sameSite: 'lax',
+              secure: true
             },
           );
           response.cookie(
@@ -71,6 +73,7 @@ export class AuthGuard implements CanActivate {
               expires: new Date(now_date.setHours(now_date.getHours() + 1)),
               httpOnly: true,
               sameSite: 'lax',
+              secure: true,
             },
           );
           request['user'] = user;
