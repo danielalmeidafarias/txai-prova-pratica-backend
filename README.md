@@ -49,6 +49,10 @@ docker-compose up -d
 ```bash
 npm run migrate
 ```
+## (Opcional) Rode o seeder do banco de dados:
+```bash
+npx prisma db seed
+```
 
 6. Inicie a aplicação: Para iniciar o servidor em modo de desenvolvimento, execute:
 ```bash
