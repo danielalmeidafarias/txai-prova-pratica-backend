@@ -21,7 +21,7 @@ Certifique-se de ter as seguintes ferramentas instaladas:
 
 1. **Clone o repositório:**
    ```bash
-   git clone <URL do repositório>
+   git clone https://github.com/danielalmeidafarias/txai-prova-pratica-backend.git
    cd txai-prova-pratica-backend
    ```
 2. Instale as dependências:
