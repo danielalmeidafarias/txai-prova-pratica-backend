@@ -179,7 +179,7 @@ export class ProductsRepository {
     }
 
     if (name) {
-      filters.AND = [
+      filters.OR = [
         {
           name: {
             contains: name,
@@ -206,7 +206,7 @@ export class ProductsRepository {
     }
 
     if (description) {
-      filters.AND = [
+      filters.OR = [
         {
           description: {
             contains: description,
