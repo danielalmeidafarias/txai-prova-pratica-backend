@@ -179,22 +179,50 @@ export class ProductsRepository {
     }
 
     if (name) {
-      filters.name = {
-        contains: name,
-      };
+      filters.AND = [
+        {
+          name: {
+            contains: name,
+          },
+        },
+        {
+          name: {
+            contains: name.toLowerCase(),
+          },
+        },
+        {
+          name: {
+            contains: name.toUpperCase(),
+          },
+        },
+      ];
     }
 
     if (min_price || max_price) {
       filters.price = {
-        ...(min_price && { gte: min_price }),
-        ...(max_price && { lte: max_price }),
+        ...(Number(min_price) && { gte: Number(min_price) }),
+        ...(Number(max_price) && { lte: Number(max_price) }),
       };
     }
 
     if (description) {
-      filters.description = {
-        contains: description,
-      };
+      filters.AND = [
+        {
+          description: {
+            contains: description,
+          },
+        },
+        {
+          description: {
+            contains: description.toLowerCase(),
+          },
+        },
+        {
+          description: {
+            contains: description.toUpperCase(),
+          },
+        },
+      ];
     }
 
     return filters;
