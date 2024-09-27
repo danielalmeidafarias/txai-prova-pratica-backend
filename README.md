@@ -2,7 +2,7 @@
 ## Descrição
 - Esta é uma API de gerenciamento de produtos desenvolvida como parte de um desafio técnico. A aplicação permite a criação, leitura, atualização e exclusão de produtos, utilizando o framework Nest.js e o banco de dados MySQL.
 * A api está disponível em https://txai-prova-pratica-backend-1.onrender.com/api
-* O deploy foi realizado no plano gratuito, por isso, algumas requisições podem demorar maisn que o normal...
+* O deploy foi realizado no plano gratuito, por isso, algumas requisições podem demorar mais que o normal...
 
 ## Tecnologias Utilizadas
 - **Nest.js**: Framework para construção de aplicações Node.js eficientes e escaláveis.
